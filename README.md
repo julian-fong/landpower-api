@@ -4,10 +4,12 @@
 
 Retrieve a property listing by its ID.
 
-#### Parameters
-| Name | Type   | In   | Required | Description      |
-|------|--------|------|----------|------------------|
-| id   | string | path | yes      | Property ID      |
+## Property Table Example
+
+| Name     | Type   | In   | Required | Description   |
+|----------|--------|------|----------|---------------|
+| id       | string | path | yes      | Property ID   |
+
 
 #### Response
 - `200 OK`: JSON property object
