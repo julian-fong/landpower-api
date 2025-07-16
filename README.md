@@ -7,10 +7,14 @@ Main Endpoint: https://www.landpower.ca/api/database
 Columns
 
 `id` : Retrieves a specific row id in the database
+
 `message` : Text containing the message
+
 `user_id` : Retrieves all messages from a specific `user_id`
+
 `property_id` : Retrieves all messages for a specific `property_id`
-`date_created` : Time and Date of the message
+
+`date_created` : Datetime like - time and date of the message. Example: "2021-02-9, 01:38:49 pm" or "2021-08-27, 11:57:44 am"
 
 ### GET /propertiesChat/
 
@@ -121,8 +125,11 @@ Example Body
 Columns
 
 `id` : Retrieves a specific row id in the database
+
 `company` : Company Name
+
 `address` : Address of the company
+
 `number` : Phone Number
 
 ### GET /propertiesManNumbers/
