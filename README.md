@@ -9,7 +9,7 @@ Columns
 `id` : Retrieves a specific row id in the database
 `message` : Text containing the message
 `user_id` : Retrieves all messages from a specific `user_id`
-`property_id`: Retrieves all messages for a specific `property_id`
+`property_id` : Retrieves all messages for a specific `property_id`
 `date_created` : Time and Date of the message
 
 ### GET /propertiesChat/
@@ -106,6 +106,12 @@ Example Body
 
 ```json
 {
-  "id": 1 // or [1, 2, 3] 
+  "id": 1
+}
+
+or
+
+{
+  "id": [1, 2, 3]
 }
 ```
