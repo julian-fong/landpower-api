@@ -411,3 +411,377 @@ Multiple IDs:
 - `400 Bad Request`: Invalid or missing IDs
 - `500 Server Error`: Internal error
 
+
+## /propertiesTechnicians/
+
+Handles CRUD operations for property technician entries.
+
+### Table: `propertiesTechnicians`
+
+| Column               | Type    | Description                    |
+|----------------------|---------|--------------------------------|
+| `id`                 | int     | Primary key                    |
+| `url`                | string  | Technician file URL            |
+| `name`               | string  | Technician name                |
+| `company`            | string  | Technician company             |
+| `phone`              | string  | Phone number                   |
+| `email`              | string  | Email                          |
+| `website`            | string  | Website URL                    |
+| `quotation`          | number  | Quotation amount               |
+| `offerQuote`         | string  | Offer or quote notes           |
+| `scheduleTechnician` | string  | Schedule time/date             |
+| `visited`            | int     | 0 or 1                         |
+| `property_id`        | string  | Linked property ID             |
+| `maintenance_id`     | string  | Linked maintenance ID          |
+
+---
+
+### GET /propertiesTechnicians
+
+Retrieves technician records.
+
+#### Query Parameters
+
+| Parameter        | Type   | Required | Description                      |
+|------------------|--------|----------|----------------------------------|
+| `id`             | string | No       | Fetch a technician by ID         |
+| `property_id`    | string | No       | Filter by property               |
+| `maintenance_id` | string | No       | Filter by maintenance job        |
+
+#### Behavior
+
+- No query params: returns all records.
+- One of the three params: filtered search.
+- Multiple or invalid query params: 400 Bad Request.
+
+#### Example Request
+
+```http
+GET /propertiesTechnicians?maintenance_id=MT123
+```
+
+#### Example Response
+
+```json
+[
+  {
+    "id": 4,
+    "name": "John Doe",
+    "company": "Tech Solutions",
+    "property_id": "P100",
+    "maintenance_id": "MT123"
+  }
+]
+```
+
+---
+
+### POST /propertiesTechnicians
+
+Creates a new technician record.
+
+#### Required Fields
+
+| Field             | Required | Notes                       |
+|------------------|----------|------------------------------|
+| `url`            | Yes      |                              |
+| `property_id`    | Yes      |                              |
+| `maintenance_id` | Yes      |                              |
+
+#### Optional Fields
+
+- `name`, `company`, `phone`, `email`, `website`, `quotation`, `offerQuote`, `scheduleTechnician`, `visited`
+
+#### Example Request Body
+
+```json
+{
+  "url": "https://example.com/file.pdf",
+  "name": "Jane Smith",
+  "company": "FixIt Inc",
+  "phone": "1234567890",
+  "property_id": "P200",
+  "maintenance_id": "MT456"
+}
+```
+
+#### Success Response
+
+```json
+{ "message": "Insert successful" }
+```
+
+#### Error Responses
+
+- `400`: Missing required fields
+- `500`: Server/database error
+
+---
+
+### PUT /propertiesTechnicians
+
+Updates a technician record.
+
+#### Request Body Fields
+
+| Field                 | Type    | Required | Description                     |
+|----------------------|---------|----------|---------------------------------|
+| `id`                 | int     | Yes      | ID of the technician to update  |
+| `url`                | string  | No       | Technician file URL             |
+| `name`               | string  | No       | Technician name                 |
+| `company`            | string  | No       | Technician company              |
+| `phone`              | string  | No       | Phone number                    |
+| `email`              | string  | No       | Email                           |
+| `website`            | string  | No       | Website URL                     |
+| `quotation`          | number  | No       | Quotation amount                |
+| `offerQuote`         | string  | No       | Offer or quote notes            |
+| `scheduleTechnician` | string  | No       | Schedule time/date              |
+| `visited`            | int     | No       | 0 or 1                          |
+| `property_id`        | string  | No       | Linked property ID              |
+| `maintenance_id`     | string  | No       | Linked maintenance ID           |
+
+#### Example Request Body
+
+```json
+{
+  "id": 3,
+  "visited": 1,
+  "offerQuote": "Updated quote details",
+  "email": "newemail@example.com"
+}
+```
+
+#### Success Response
+
+```json
+{ "message": "Update successful" }
+```
+
+#### Error Responses
+
+- `400`: Missing `id`, invalid `id`, or no valid update fields provided
+- `500`: Server/database error
+
+
+### DELETE /propertiesTechnicians
+
+Deletes one or more technician records.
+
+#### Request Body
+
+```json
+{ "id": 5 }
+```
+
+```json
+{ "id": [3, 4, 7] }
+```
+
+#### Behavior
+
+- Validates that all `id`s exist before deletion.
+- Supports single or batch deletion.
+
+#### Success Response
+
+```json
+{ "message": "Deletion successful" }
+```
+
+#### Error Responses
+
+- `400`: Missing or invalid `id`, including one non-existent ID
+- `500`: Server/database error
+
+
+## /tenantAppliances/
+
+Handles CRUD operations for tenant appliance records.
+
+### Columns
+
+- `id` (int) – Primary key
+- `name` (string)
+- `type` (string)
+- `details` (string)
+- `installed` (date)
+- `warranty` (date)
+- `notes` (string)
+- `date_created` (date)
+- `property_id` (string)
+- `user_id` (string)
+
+---
+
+### GET /tenantAppliances/
+
+Fetch tenant appliances by specific query parameters.
+
+#### Query Parameters
+
+| Parameter     | Type   | Required | Description                               |
+|--------------|--------|----------|-------------------------------------------|
+| `id`         | int    | No       | Fetch a specific appliance by ID          |
+| `user_id`    | string | No       | Fetch appliances for a specific user      |
+| `property_id`| string | No       | Fetch appliances for a specific property  |
+
+#### Rules
+
+- Provide exactly **1** or exactly **2** of the following: `id`, `user_id`, `property_id`.
+- If 2 provided, both must be `user_id` and `property_id`.
+
+#### Example Request
+
+```http
+GET /tenantAppliances?user_id=123&property_id=456
+```
+
+#### Example Response
+
+```json
+[
+  {
+    "id": 3,
+    "name": "Washing Machine",
+    "type": "Appliance",
+    "details": "Samsung 7kg",
+    "installed": "2024-05-01",
+    "warranty": "2026-05-01",
+    "notes": "Installed upstairs",
+    "date_created": "2024-04-30",
+    "property_id": "P456",
+    "user_id": "U123"
+  }
+]
+```
+
+#### Responses
+
+- `400 Bad Request` — If invalid combination or missing parameters
+- `400 Data Not Found` — If no record matches
+
+---
+
+### POST /tenantAppliances/
+
+Insert a new appliance record.
+
+#### Required Fields in Body (JSON)
+
+| Field         | Type   | Required | Description               |
+|---------------|--------|----------|---------------------------|
+| `name`        | string | No       | Appliance name            |
+| `type`        | string | No       | Appliance type            |
+| `details`     | string | No       | Extra details             |
+| `installed`   | string | Yes      | Install date (YYYY-MM-DD) |
+| `warranty`    | string | Yes      | Warranty date (YYYY-MM-DD)|
+| `notes`       | string | No       | Optional notes            |
+| `date_created`| string | Yes      | Creation date             |
+| `property_id` | string | Yes      | Associated property ID    |
+| `user_id`     | string | Yes      | Associated user ID        |
+
+#### Example Request Body
+
+```json
+{
+  "name": "Dishwasher",
+  "type": "Appliance",
+  "details": "Bosch Series 6",
+  "installed": "2025-01-10",
+  "warranty": "2027-01-10",
+  "notes": "Installed in kitchen",
+  "date_created": "2025-01-11",
+  "property_id": "789",
+  "user_id": "321"
+}
+```
+
+#### Success Response
+
+```json
+{ "message": "Insert successful" }
+```
+
+#### Errors
+
+- `400` — Missing required fields
+- `500` — Database/server error
+
+---
+
+### PUT /tenantAppliances/
+
+Update an existing appliance record by `id`.
+
+#### Required in Body
+
+- `id`: ID of the row to update
+- At least one updatable field
+
+#### Updatable Fields
+
+| Field         | Type   | Required | Description               |
+|---------------|--------|----------|---------------------------|
+| `name`        | string | No       | Appliance name            |
+| `type`        | string | No       | Appliance type            |
+| `details`     | string | No       | Extra details             |
+| `installed`   | string | Yes      | Install date (YYYY-MM-DD) |
+| `warranty`    | string | Yes      | Warranty date (YYYY-MM-DD)|
+| `notes`       | string | No       | Optional notes            |
+| `date_created`| string | Yes      | Creation date             |
+| `property_id` | string | Yes      | Associated property ID    |
+| `user_id`     | string | Yes      | Associated user ID        |
+
+#### 🧾 Example Request Body
+
+```json
+{
+  "id": 3,
+  "warranty": "2026-12-31",
+  "notes": "Warranty extended"
+}
+```
+
+#### Success Response
+
+```json
+{ "message": "Update successful" }
+```
+
+#### Errors
+
+- `400` — Missing or invalid `id`, or no fields provided
+- `500` — Database error
+
+---
+
+### DELETE /tenantAppliances/
+
+Delete one or more appliance records.
+
+#### Request Body
+
+| Field | Type        | Required | Description                    |
+|-------|-------------|----------|--------------------------------|
+| `id`  | int \| int[]| Yes      | ID or array of IDs to delete   |
+
+#### Example Request Body
+
+```json
+{ "id": 5 }
+```
+
+```json
+{ "id": [6, 7, 8] }
+```
+
+```json
+{ "message": "Deletion successful" }
+```
+
+#### Errors
+
+- `400` — Invalid or missing ID(s)
+- `500` — Database/server error
+
+---
