@@ -88,7 +88,7 @@ Retrieve property chats in the database. Specify either the `id`, `user_id` or `
 
 | Name         | Type   | In   | Required | Description                | Example URL                    |
 |--------------|--------|------|----------|----------------------------|--------------------------------|
-| `id`         | string | path | No       | Row ID                     | `/propertiesChat/{id}`         |
+| `id`         | int | path | No       | Row ID                     | `/propertiesChat/{id}`         |
 | `user_id`    | string | path | No       | User ID for the property   | `/propertiesChat/{user_id}`    |
 | `property_id`| string | path | No       | Property ID                | `/propertiesChat/{property_id}`|
 
@@ -204,7 +204,7 @@ Retrieve property chats in the database. Specify either the `id`, `user_id` or `
 
 | Name         | Type   | In   | Required | Description                | Example URL                      |
 |--------------|--------|------|----------|----------------------------|----------------------------------|
-| `id`         | string | path | No       | Row ID                     | `/propertiesManNumbers/{id}`     |
+| `id`         | int | path | No       | Row ID                     | `/propertiesManNumbers/{id}`     |
 | `company`    | string | path | No       | Company Name               | `/propertiesManNumbers/{company}`|
 | `address`    | string | path | No       | Address of the company     | `/propertiesManNumbers/{address}`|
 | `number`     | string | path | No       | Phone Number of the company| `/propertiesManNumbers/{number}` |
@@ -518,7 +518,7 @@ Retrieves technician records.
 
 | Parameter        | Type   | Required | Description                      |
 |------------------|--------|----------|----------------------------------|
-| `id`             | string | No       | Fetch a technician by ID         |
+| `id`             | int | No       | Fetch a technician by row ID         |
 | `property_id`    | string | No       | Filter by property               |
 | `maintenance_id` | string | No       | Filter by maintenance job        |
 
@@ -937,6 +937,48 @@ Deletes one or more tenant records.
 - `400`: Missing or invalid `id`, including one non-existent or invalid type
 - `500`: Server/database error
 
+## /queryProjects
+
+Endpoint to retrieve pre-construction project information.
+
+Using this endpoint also retrieves information from other tables such as
+- Floorplans
+- PriceLists
+- Features
+- SubImages
+- Developers
+
+### /queryProjects/
+
+#### Query Parameters
+
+
+| Name         | Type   | In   | Required | Description                | Example URL                    |
+|--------------|--------|------|----------|----------------------------|--------------------------------|
+| `id`         | int | path | No       | Row ID                     | `/queryProjects/{id}`         |
+| `projectName`    | string | path | No       | User ID for the property   | `/queryProjects/{projectName}`    |
+
+## /register
+
+Endpoint to insert new users into the database - uses the `users` table
+
+### POST /register
+
+Insert a new appliance record.
+
+#### Required Fields in Body (JSON)
+
+| Field         | Type   | Required | Description               |
+|---------------|--------|----------|---------------------------|
+| `user_name`        | string | Yes       | username of the account |
+| `user_pass`     | string | Yes       | password for the account         |
+| `user_email`     | string | Yes       | email of the account         |
+| `user_date`     | string | No       |  Date of registration      |
+| `user_level`     | string | Yes       | role of the account   |
+
+Note:
+
+`user_date` is of format YYYY-MM-DD HH:MM:SS
 
 ## /tenantAppliances
 
@@ -1082,7 +1124,7 @@ Update an existing appliance record by `id`.
 | `property_id` | string | Yes      | Associated property ID    |
 | `user_id`     | string | Yes      | Associated user ID        |
 
-#### 🧾 Example Request Body
+#### Example Request Body
 
 ```json
 {
@@ -1555,4 +1597,57 @@ Multiple IDs:
 
 ---
 
+## users
 
+### PUT /users
+
+Use this endpoint to update certain fields of an account
+
+Note:
+
+Possible values for the field `user_level` are 
+
+- Super
+- Mod
+- Agent
+- Regular
+- Tenant
+
+#### Required in Body
+
+- `id`: ID of the row to update
+- At least one updatable field
+
+#### Updatable Fields
+
+| Field           | Type   | Required | Description                       |
+|-----------------|--------|----------|-----------------------------------|
+| `user_name`     | string | No       | username of the account           |
+| `user_pass`     | string | No       | Password of the account           |
+| `user_email`    | int    | No       | Email address                     |
+| `user_date`     | string | No       | user date of the account          |
+| `user_level`    | string | No       | User access                       |
+
+### DELETE /users
+
+Delete one or more appliance records.
+
+#### Request Body
+
+| Field | Type        | Required | Description                    |
+|-------|-------------|----------|--------------------------------|
+| `id`  | int \| int[]| Yes      | ID or array of IDs to delete   |
+
+#### Example Request Body
+
+```json
+{ "id": 5 }
+```
+
+```json
+{ "id": [6, 7, 8] }
+```
+
+```json
+{ "message": "Deletion successful" }
+```
