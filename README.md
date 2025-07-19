@@ -2,6 +2,23 @@
 
 Main Endpoint: https://www.landpower.ca/api/database
 
+## Table of Contents
+
+- [login](#login)
+- [propertiesChat](#propertiesChat)
+- [propertiesManNumbers](#propertiesManNumbers)
+- [propertiesSchedule](#propertiesSchedule)
+- [propertiesTechnicians](#propertiesTechnicians)
+- [propertiesTenant](#propertiesTenant)
+- [queryProjects](#queryProjects)
+- [register](#register)
+- [tenantAppliances](#tenantAppliances)
+- [tenantEmailTech](#tenantEmailTech)
+- [tenantExpenses](#tenantExpenses)
+- [tenantImage](#tenantImage)
+- [tenantInsurance](#tenantInsurance)
+- [tenantInvoice](#tenantInvoice)
+
 ## /login
 
 Main Endpoint use log into the website
