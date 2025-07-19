@@ -4,7 +4,7 @@ Main Endpoint: https://www.landpower.ca/api/database
 
 ## /propertiesChat/
 
-Columns
+### Table Schema
 
 | Field            | Type        | Description                      |
 |------------------|-------------|----------------------------------|
@@ -124,15 +124,15 @@ Example Body
 
 ## /propertiesManNumbers/
 
-Columns
+### Table Schema
 
-`id` : Retrieves a specific row id in the database
+| Field     | Type          | Description                     |
+|-----------|---------------|---------------------------------|
+| id | int(11)       | Auto-increment primary key      |
+| company   | varchar(255)  | Management name                    |
+| address   | varchar(255)  | Management address                 |
+| number    | varchar(255)  | Management phone number      |
 
-`company` : Company Name
-
-`address` : Address of the company
-
-`number` : Phone Number
 
 ### GET /propertiesManNumbers/
 
@@ -234,15 +234,24 @@ Example Body
 
 ## /propertiesSchedule/
 
-Columns
+### Table Schema
 
-- `id` : Unique identifier for each schedule
-- `title` : Title of the schedule
-- `startTime` : Start time of the schedule
-- `endTime` : End time of the schedule
-- `technician`, `tenant`, `landlord`, `agent` : Flags indicating role (1 or 0)
-- `technicians_id` : ID of the assigned technician
-- `property_id` : ID of the associated property
+| Field               | Type          | Description                        |
+|---------------------|---------------|----------------------------------|
+| id          | int(11)       | Auto-increment primary key        |
+| title               | varchar(50)   | Title of the record or event      |
+| startTime           | varchar(50)   | Start time (stored as string)     |
+| endTime             | varchar(50)   | End time (stored as string)       |
+| technician          | int(11)       | Technician ID                     |
+| tenant              | int(11)       | Tenant ID                        |
+| landlord            | int(11)       | Landlord ID                      |
+| agent               | int(11)       | Agent ID                        |
+| technicians_id | int(11)       | Index/reference for technician   |
+| property_id    | int(11)       | Index/reference for property      |
+
+Note:
+
+`startTime` and `endTime` are of format `YYYY-MM-DDTHH:MM:SS`
 
 ---
 
@@ -418,23 +427,24 @@ Multiple IDs:
 
 Handles CRUD operations for property technician entries.
 
-### Table: `propertiesTechnicians`
+### Table Schema:
 
-| Column               | Type    | Description                    |
-|----------------------|---------|--------------------------------|
-| `id`                 | int     | Primary key                    |
-| `url`                | string  | Technician file URL            |
-| `name`               | string  | Technician name                |
-| `company`            | string  | Technician company             |
-| `phone`              | string  | Phone number                   |
-| `email`              | string  | Email                          |
-| `website`            | string  | Website URL                    |
-| `quotation`          | number  | Quotation amount               |
-| `offerQuote`         | string  | Offer or quote notes           |
-| `scheduleTechnician` | string  | Schedule time/date             |
-| `visited`            | int     | 0 or 1                         |
-| `property_id`        | string  | Linked property ID             |
-| `maintenance_id`     | string  | Linked maintenance ID          |
+| Field                | Type          | Description                     |
+|----------------------|---------------|---------------------------------|
+| id           | int(11)       | Auto-increment primary key      |
+| url                  | varchar(255)  | URL associated with the record  |
+| name                 | varchar(255)  | Name of the technician or entity|
+| company              | varchar(255)  | Company name                   |
+| phone                | varchar(50)   | Phone number                   |
+| email                | varchar(255)  | Email address                  |
+| website              | varchar(255)  | Website URL                    |
+| quotation            | int(11)       | Quotation amount (numeric)     |
+| offerQuote           | varchar(255)  | Offer or quote description     |
+| scheduleTechnician   | varchar(255)  | Technician schedule info       |
+| visited              | int(11)       | Visit count or flag            |
+| property_id    | int(11)       | Foreign key for property       |
+| maintenance_id  | int(11)       | Foreign key for maintenance job|
+
 
 ---
 
@@ -698,7 +708,7 @@ GET /tenantList?id=123
 
 ---
 
-### POST /tenantList
+### POST /propertiesTenant
 
 Creates a new tenant record.
 
@@ -793,7 +803,7 @@ Creates a new tenant record.
 
 ---
 
-### PUT /tenantList
+### PUT /propertiesTenant
 
 Updates an existing tenant record.
 
@@ -872,16 +882,22 @@ Handles CRUD operations for tenant appliance records.
 
 ### Columns
 
-- `id` (int) – Primary key
-- `name` (string)
-- `type` (string)
-- `details` (string)
-- `installed` (date)
-- `warranty` (date)
-- `notes` (string)
-- `date_created` (date)
-- `property_id` (string)
-- `user_id` (string)
+| Field           | Type         | Description                          |
+|-----------------|--------------|------------------------------------|
+| id    | int(11)      | Auto-increment primary key          |
+| name            | varchar(255) | Name of the item                    |
+| type            | varchar(255) | Type or category                   |
+| details         | varchar(255) | Additional details                  |
+| installed       | date         | Installation date                  |
+| warranty        | date         | Warranty expiration date           |
+| notes           | text         | Notes or comments                  |
+| property_id | int(11)      | Foreign key to property             |
+| date_created    | date         | Record creation date               |
+| user_id    | int(11)      | Foreign key to user                 |
+
+Note:
+
+`date_created` is of format: YYYY-MM-DD
 
 ---
 
@@ -1057,3 +1073,424 @@ Delete one or more appliance records.
 - `500` — Database/server error
 
 ---
+
+## /tenantEmailTech/
+
+Handles CRUD operations for tenant email tech records.
+
+### Table Schema:
+
+| Field           | Type         | Description                          |
+|-----------------|--------------|--------------------------------------|
+| id              | int(11)      | Auto-increment primary key           |
+| link            | varchar(255) | Link or URL                         |
+| email           | varchar(255) | Email address                       |
+| interested      | int(11)      | Interest level or status            |
+| property_id     | int(11)      | Foreign key to property             |
+| maintenance_id  | int(11)      | Foreign key to maintenance record   |
+| user_id         | int(11)      | Foreign key to user                 |
+| date_created    | varchar(50)  | Record creation date                |
+
+Note:
+
+`date_created` is of format: YYYY-MM-DD
+
+---
+
+### GET /tenantEmailTech/
+
+Fetch tenant email tech records by specific query parameters.
+
+#### Query Parameters
+
+| Parameter       | Type   | Required | Description                                    |
+|-----------------|--------|----------|------------------------------------------------|
+| `id`            | int    | No       | Fetch a specific record by ID                  |
+| `user_id`       | string | No       | Fetch records for a specific user              |
+| `property_id`   | string | No       | Fetch records for a specific property          |
+| `maintenance_id`| string | No       | Fetch records for a specific maintenance item  |
+
+#### Rules
+
+- Provide exactly **1** of the following: `id`, `user_id`, `property_id`, or `maintenance_id`.
+
+#### Example Request
+
+```http
+GET /tenantEmailTech?user_id=123
+```
+
+#### Example Response
+
+```json
+[
+  {
+    "id": 5,
+    "link": "https://example.com/tech-support",
+    "email": "tenant@example.com",
+    "interested": 1,
+    "property_id": "456",
+    "maintenance_id": "789",
+    "user_id": "123",
+    "date_created": "2024-04-30"
+  }
+]
+```
+
+#### Responses
+
+- `400 Bad Request` — If invalid combination or missing parameters
+- `400 Data Not Found` — If no record matches
+
+---
+
+### POST /tenantEmailTech/
+
+Insert a new email tech record.
+
+#### Required Fields in Body (JSON)
+
+| Field           | Type   | Required | Description                       |
+|-----------------|--------|----------|-----------------------------------|
+| `link`          | string | No       | Link or URL                      |
+| `email`         | string | No       | Email address                    |
+| `interested`    | int    | No       | Interest level (default: 0)      |
+| `property_id`   | string | Yes      | Associated property ID            |
+| `maintenance_id`| string | Yes      | Associated maintenance ID         |
+| `user_id`       | string | Yes      | Associated user ID                |
+| `date_created`  | string | Yes      | Creation date (YYYY-MM-DD)        |
+
+#### Example Request Body
+
+```json
+{
+  "link": "https://example.com/repair-request",
+  "email": "tenant@example.com",
+  "interested": 1,
+  "property_id": "456",
+  "maintenance_id": "789",
+  "user_id": "123",
+  "date_created": "2025-01-11"
+}
+```
+
+#### Success Response
+
+```json
+{ "message": "Insert successful" }
+```
+
+#### Errors
+
+- `400` — Missing required fields
+- `500` — Database/server error
+
+---
+
+### PUT /tenantEmailTech/
+
+Update an existing email tech record by `id`.
+
+#### Required in Body
+
+- `id`: ID of the row to update
+- At least one updatable field
+
+#### Updatable Fields
+
+| Field           | Type   | Required | Description                       |
+|-----------------|--------|----------|-----------------------------------|
+| `link`          | string | No       | Link or URL                      |
+| `email`         | string | No       | Email address                    |
+| `interested`    | int    | No       | Interest level                   |
+| `property_id`   | string | No       | Associated property ID            |
+| `maintenance_id`| string | No       | Associated maintenance ID         |
+| `user_id`       | string | No       | Associated user ID                |
+| `date_created`  | string | No       | Creation date (YYYY-MM-DD)        |
+
+#### Example Request Body
+
+```json
+{
+  "id": 5,
+  "interested": 0,
+  "email": "updated@example.com"
+}
+```
+
+#### Success Response
+
+```json
+{ "message": "Update successful" }
+```
+
+#### Errors
+
+- `400` — Missing or invalid `id`, or no fields provided
+- `500` — Database error
+
+---
+
+### DELETE /tenantEmailTech/
+
+Delete one or more email tech records.
+
+#### Request Body
+
+| Field | Type        | Required | Description                    |
+|-------|-------------|----------|--------------------------------|
+| `id`  | int \| int[]| Yes      | ID or array of IDs to delete   |
+
+#### Example Request Body
+
+```json
+{ "id": 5 }
+```
+
+```json
+{ "id": [6, 7, 8] }
+```
+
+#### Success Response
+
+```json
+{ "message": "Deletion successful" }
+```
+
+#### Errors
+
+- `400` — Invalid or missing ID(s)
+- `500` — Database/server error
+
+---
+
+
+## /tenantExpenses/
+
+Handles CRUD operations for tenant expenses records.
+
+### Table Schema:
+
+| Field         | Type      | Description                     |
+|---------------|-----------|---------------------------------|
+| id            | int(11)   | Auto-increment primary key      |
+| category      | text      | Expense category                |
+| other_repair  | text      | Other repair description       |
+| pay_to        | text      | Payee                          |
+| balance       | text      | Balance amount                 |
+| status        | text      | Payment status (paid/unpaid)   |
+| paid_on       | text      | Date paid (YYYY-MM-DD)         |
+| tax_status    | text      | Tax status (yes/no)            |
+| rent_invoice  | text      | Rent invoice status (yes/no)   |
+| recurring     | text      | Recurring expense (yes/no)     |
+| notes         | text      | Additional notes               |
+| property_id   | int(11)   | Associated property ID         |
+| date_created  | date      | Record creation date (YYYY-MM-DD) |
+| user_id       | int(11)   | Associated user ID             |
+
+---
+
+### GET /tenantExpenses/
+
+Fetch tenant expense records by query parameters.
+
+#### Query Parameters
+
+| Parameter     | Type   | Required | Description                             |
+|---------------|--------|----------|-----------------------------------------|
+| `id`          | int    | No       | Fetch specific record by ID              |
+| `user_id`     | int    | No       | Fetch records for a specific user        |
+| `property_id` | int    | No       | Fetch records for a specific property    |
+
+#### Rules
+
+- Provide **either** exactly 1 of the parameters (`id`, `user_id`, `property_id`)  
+- OR provide **both** `user_id` and `property_id` together.
+
+#### Example Requests
+
+```http
+GET /tenantExpenses?id=10
+GET /tenantExpenses?user_id=123
+GET /tenantExpenses?property_id=456
+GET /tenantExpenses?user_id=123&property_id=456
+```
+
+#### Example Response
+
+```json
+[
+  {
+    "id": 5,
+    "category": "Plumbing",
+    "other_repair": "Fixed leaking faucet",
+    "pay_to": "Joe's Plumbing",
+    "balance": "150.00",
+    "status": "paid",
+    "paid_on": "2025-06-10",
+    "tax_status": "yes",
+    "rent_invoice": "no",
+    "recurring": "no",
+    "notes": "Work done promptly",
+    "property_id": "456",
+    "date_created": "2025-06-01",
+    "user_id": "123"
+  }
+]
+```
+
+#### Responses
+
+- `400 Bad Request` — Invalid or missing parameters
+- `400 Data Not Found` — No records matched
+
+---
+
+### POST /tenantExpenses/
+
+Insert a new tenant expense record.
+
+#### Required Fields in JSON Body
+
+| Field         | Type   | Required | Description                        |
+|---------------|--------|----------|------------------------------------|
+| `property_id` | int    | Yes      | Associated property ID              |
+| `date_created`| string | Yes      | Record creation date (YYYY-MM-DD)  |
+| `user_id`     | int    | Yes      | Associated user ID                  |
+
+#### Optional Fields
+
+| Field         | Type   | Description                        |
+|---------------|--------|------------------------------------|
+| `category`      | string | Expense category                   |
+| `other_repair`  | string | Other repair description          |
+| `pay_to`        | string | Payee                            |
+| `balance`       | string | Balance amount                   |
+| `status`        | string | Payment status (paid/unpaid)     |
+| `paid_on`       | string | Date paid (YYYY-MM-DD)           |
+| `tax_status`    | string | Tax status (yes/no)              |
+| `rent_invoice`  | string | Rent invoice status (yes/no)     |
+| `recurring`     | string | Recurring expense (yes/no)       |
+| `notes`         | string | Additional notes                 |
+
+#### Example Request Body
+
+```json
+{
+  "category": "Plumbing",
+  "other_repair": "Fixed leaking faucet",
+  "pay_to": "Joe's Plumbing",
+  "balance": "150.00",
+  "status": "paid",
+  "paid_on": "2025-06-10",
+  "tax_status": "yes",
+  "rent_invoice": "no",
+  "recurring": "no",
+  "notes": "Work done promptly",
+  "property_id": 456,
+  "date_created": "2025-06-01",
+  "user_id": 123
+}
+```
+
+#### Success Response
+
+```json
+{ "message": "Insert successful" }
+```
+
+#### Errors
+
+- `400` — Missing required fields
+- `500` — Database or server error
+
+---
+
+### PUT /tenantExpenses/
+
+Update an existing tenant expense record by `id`.
+
+#### Required in Body
+
+- `id` (int): ID of the record to update  
+- At least one updatable field from below.
+
+#### Updatable Fields
+
+| Field         | Type   | Description                        |
+|---------------|--------|------------------------------------|
+| `category`      | string | Expense category                   |
+| `other_repair`  | string | Other repair description          |
+| `pay_to`        | string | Payee                            |
+| `balance`       | string | Balance amount                   |
+| `status`        | string | Payment status (paid/unpaid)     |
+| `paid_on`       | string | Date paid (YYYY-MM-DD)           |
+| `tax_status`    | string | Tax status (yes/no)              |
+| `rent_invoice`  | string | Rent invoice status (yes/no)     |
+| `recurring`     | string | Recurring expense (yes/no)       |
+| `notes`         | string | Additional notes                 |
+| `property_id`   | int    | Associated property ID            |
+| `date_created`  | string | Record creation date (YYYY-MM-DD)|
+| `user_id`       | int    | Associated user ID                |
+
+#### Example Request Body
+
+```json
+{
+  "id": 5,
+  "status": "unpaid",
+  "notes": "Payment pending"
+}
+```
+
+#### Success Response
+
+```json
+{ "message": "Update successful" }
+```
+
+#### Errors
+
+- `400` — Missing or invalid `id`, or no fields to update
+- `500` — Database error
+
+---
+
+### DELETE /tenantExpenses/
+
+Delete one or more tenant expense records.
+
+#### Request Body
+
+| Field | Type       | Required | Description                  |
+|-------|------------|----------|------------------------------|
+| `id`  | int \| int[] | Yes      | ID or array of IDs to delete |
+
+#### Example Request Body
+
+Single ID:
+
+```json
+{ "id": 5 }
+```
+
+Multiple IDs:
+
+```json
+{ "id": [6, 7, 8] }
+```
+
+#### Success Response
+
+```json
+{ "message": "Deletion successful" }
+```
+
+#### Errors
+
+- `400` — Invalid or missing ID(s)
+- `500` — Database/server error
+
+---
+
+
