@@ -21,7 +21,7 @@ Main Endpoint: https://www.landpower.ca/api/database
 - [tenantInvoice](#tenantInvoice)
 - [tenantNotification](#tenantNotification)
 - [tenantPayment](#tenantInvoice)
-- [tenantInvoice](#tenantInvoice)
+- [users](#users)
 
 ## /login
 
