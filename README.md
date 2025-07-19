@@ -17,6 +17,10 @@ Main Endpoint: https://www.landpower.ca/api/database
 - [tenantExpenses](#tenantExpenses)
 - [tenantImage](#tenantImage)
 - [tenantInsurance](#tenantInsurance)
+- [tenantList](#tenantList)
+- [tenantInvoice](#tenantInvoice)
+- [tenantNotification](#tenantNotification)
+- [tenantPayment](#tenantInvoice)
 - [tenantInvoice](#tenantInvoice)
 
 ## /login
@@ -767,7 +771,7 @@ Retrieves property ids by tenants.
 #### Example Request
 
 ```http
-GET /tenantList?id=123
+GET /propertiesTenant?id=123
 ```
 
 #### Example Response
