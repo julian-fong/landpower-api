@@ -2,7 +2,69 @@
 
 Main Endpoint: https://www.landpower.ca/api/database
 
-## /propertiesChat/
+## /login
+
+Main Endpoint use log into the website
+
+### POST /login
+
+| Name           | Type   | In   | Required  | Description                |
+|----------------|--------|------|-----------|----------------------------|
+| `user_name`      | string | body | No       | Username as registered in database    |
+| `user_pass`      | string    | body | Yes       | Password   |
+| `user_email`  | string    | body | No       | Email as registered in database              |
+
+Example Body
+
+```json
+{
+  "user_email": "test@test.com",
+  "user_pass": "password123",
+}
+```
+
+#### Success Response
+
+```json
+{ "message": "Successful login" }
+```
+
+#### Error Responses
+
+- `400`: User Not Found or Incorrect Password
+- `500`: Server/database error
+
+### PUT /login
+
+Use this endpoint to update passwords for users
+
+| Name           | Type   | In   | Required  | Description                |
+|----------------|--------|------|-----------|----------------------------|
+| `user_name`      | string | body | No       | Username as registered in database                  |
+| `user_pass`      | string    | body | Yes       | Password   |
+| `user_email`  | string    | body | No       | Email as registered in database              |
+
+Example Body
+
+```json
+{
+  "user_email": "test@test.com",
+  "user_pass": "password123",
+}
+```
+
+#### Success Response
+
+```json
+{ "message": "Update successful" }
+```
+
+#### Error Responses
+
+- `400`: username not found in update
+- `500`: Server/database error
+
+## /propertiesChat
 
 ### Table Schema
 
@@ -48,7 +110,7 @@ Example Result
     }
 ]
 ```
-### POST /propertiesChat/
+### POST /propertiesChat
 
 Inserts a new row into the database. Requires all parameters `date_created`, `user_id`, `property_id`, and `message` parameter.
 
@@ -72,7 +134,7 @@ Example Body
 }
 ```
 
-### PUT /propertiesChat/
+### PUT /propertiesChat
 
 Updates a specific row into the database. Requires at least one parameters `date_created`, `user_id`, `property_id` or `message` parameter along with the specific `id` row to update.
 
@@ -98,7 +160,7 @@ Example Body
 }
 ```
 
-### Delete /propertiesChat/
+### Delete /propertiesChat
 
 Deletes a specific row into the database. Requires the specific `id` row or an array of `id`s.
 
@@ -165,7 +227,7 @@ Example Result
     }
 ]
 ```
-### POST /propertiesManNumbers/
+### POST /propertiesManNumbers
 
 Inserts a new row into the database. Requires at least one of the parameters `company`, `address`, or `number`.
 
@@ -186,7 +248,7 @@ Example Body
 }
 ```
 
-### PUT /propertiesManNumbers/
+### PUT /propertiesManNumbers
 
 Updates a specific row into the database. Requires at least one parameters `company`, `address`, or `number` parameter along with the specific `id` row to update.
 
@@ -208,7 +270,7 @@ Example Body
 }
 ```
 
-### Delete /propertiesManNumbers/
+### Delete /propertiesManNumbers
 
 Deletes a specific row into the database. Requires the specific `id` row or an array of `id`s.
 
@@ -302,7 +364,7 @@ GET /propertiesSchedule?id=1
 
 ---
 
-### POST /propertiesSchedule/
+### POST /propertiesSchedule
 
 Insert a new schedule into the database.
 
@@ -346,7 +408,7 @@ Requires:
 
 ---
 
-### PUT /propertiesSchedule/
+### PUT /propertiesSchedule
 
 Update an existing schedule by ID.
 
@@ -388,7 +450,7 @@ Requires:
 
 ---
 
-### DELETE /propertiesSchedule/
+### DELETE /propertiesSchedule
 
 Delete schedule entries by ID or list of IDs.
 
@@ -469,7 +531,7 @@ Retrieves technician records.
 #### Example Request
 
 ```http
-GET /propertiesTechnicians?maintenance_id=MT123
+GET /propertiesTechnicians?maintenance_id=123
 ```
 
 #### Example Response
@@ -876,7 +938,7 @@ Deletes one or more tenant records.
 - `500`: Server/database error
 
 
-## /tenantAppliances/
+## /tenantAppliances
 
 Handles CRUD operations for tenant appliance records.
 
@@ -950,7 +1012,7 @@ GET /tenantAppliances?user_id=123&property_id=456
 
 ---
 
-### POST /tenantAppliances/
+### POST /tenantAppliances
 
 Insert a new appliance record.
 
@@ -997,7 +1059,7 @@ Insert a new appliance record.
 
 ---
 
-### PUT /tenantAppliances/
+### PUT /tenantAppliances
 
 Update an existing appliance record by `id`.
 
@@ -1043,7 +1105,7 @@ Update an existing appliance record by `id`.
 
 ---
 
-### DELETE /tenantAppliances/
+### DELETE /tenantAppliances
 
 Delete one or more appliance records.
 
@@ -1144,7 +1206,7 @@ GET /tenantEmailTech?user_id=123
 
 ---
 
-### POST /tenantEmailTech/
+### POST /tenantEmailTech
 
 Insert a new email tech record.
 
@@ -1187,7 +1249,7 @@ Insert a new email tech record.
 
 ---
 
-### PUT /tenantEmailTech/
+### PUT /tenantEmailTech
 
 Update an existing email tech record by `id`.
 
@@ -1231,7 +1293,7 @@ Update an existing email tech record by `id`.
 
 ---
 
-### DELETE /tenantEmailTech/
+### DELETE /tenantEmailTech
 
 Delete one or more email tech records.
 
@@ -1265,7 +1327,7 @@ Delete one or more email tech records.
 ---
 
 
-## /tenantExpenses/
+## /tenantExpenses
 
 Handles CRUD operations for tenant expenses records.
 
@@ -1346,7 +1408,7 @@ GET /tenantExpenses?user_id=123&property_id=456
 
 ---
 
-### POST /tenantExpenses/
+### POST /tenantExpenses
 
 Insert a new tenant expense record.
 
@@ -1406,7 +1468,7 @@ Insert a new tenant expense record.
 
 ---
 
-### PUT /tenantExpenses/
+### PUT /tenantExpenses
 
 Update an existing tenant expense record by `id`.
 
@@ -1456,7 +1518,7 @@ Update an existing tenant expense record by `id`.
 
 ---
 
-### DELETE /tenantExpenses/
+### DELETE /tenantExpenses
 
 Delete one or more tenant expense records.
 
