@@ -6,13 +6,15 @@ Main Endpoint: https://www.landpower.ca/api/database
 
 Columns
 
-`id` : Retrieves a specific row id in the database
+| Field            | Type        | Description                      |
+|------------------|-------------|----------------------------------|
+| id        | int(11)     | Auto-increment primary key       |
+| message          | text        | Message content                  |
+| date_created     | varchar(50) | Date and time the message was created |
+| property_id | int(11)     | Foreign key to a property        |
+| user_id     | int(11)     | Foreign key to a user            |
 
-`message` : Text containing the message
-
-`user_id` : Retrieves all messages from a specific `user_id`
-
-`property_id` : Retrieves all messages for a specific `property_id`
+Note: 
 
 `date_created` : Datetime like - time and date of the message. Example: "2021-02-9, 01:38:49 pm" or "2021-08-27, 11:57:44 am"
 
@@ -20,7 +22,7 @@ Columns
 
 Retrieve property chats in the database. Specify either the `id`, `user_id` or `property_id` parameter or both the `user_id` and `property_id` parameters together to retrieve a specific chat log for a user.
 
-## 📘 `propertiesChat` Path Parameters
+## `propertiesChat` Path Parameters
 
 | Name         | Type   | In   | Required | Description                | Example URL                    |
 |--------------|--------|------|----------|----------------------------|--------------------------------|
@@ -50,7 +52,7 @@ Example Result
 
 Inserts a new row into the database. Requires all parameters `date_created`, `user_id`, `property_id`, and `message` parameter.
 
-## 📘 `propertiesChat` Post Parameters
+## `propertiesChat` Post Parameters
 
 | Name           | Type   | In   | Required  | Description                |
 |----------------|--------|------|-----------|----------------------------|
@@ -74,7 +76,7 @@ Example Body
 
 Updates a specific row into the database. Requires at least one parameters `date_created`, `user_id`, `property_id` or `message` parameter along with the specific `id` row to update.
 
-## 📘 `propertiesChat` Put Update Parameters
+## `propertiesChat` Put Update Parameters
 
 | Name           | Type   | In   | Required | Description                |
 |----------------|--------|------|----------|----------------------------|
@@ -100,7 +102,7 @@ Example Body
 
 Deletes a specific row into the database. Requires the specific `id` row or an array of `id`s.
 
-## 📘 `propertiesChat` Put Update Parameters
+## `propertiesChat` Put Update Parameters
 
 | Name           | Type   | In   | Required | Description                |
 |----------------|--------|------|----------|----------------------------|
@@ -136,7 +138,7 @@ Columns
 
 Retrieve property chats in the database. Specify either the `id`, `user_id` or `property_id` parameter or both the `user_id` and `property_id` parameters together to retrieve a specific chat log for a user.
 
-## 📘 `propertiesManNumbers` Path Parameters
+## `propertiesManNumbers` Path Parameters
 
 | Name         | Type   | In   | Required | Description                | Example URL                      |
 |--------------|--------|------|----------|----------------------------|----------------------------------|
@@ -167,7 +169,7 @@ Example Result
 
 Inserts a new row into the database. Requires at least one of the parameters `company`, `address`, or `number`.
 
-## 📘 `propertiesManNumbers` Post Parameters
+## `propertiesManNumbers` Post Parameters
 
 | Name           | Type   | In   | Required  | Description                |
 |----------------|--------|------|-----------|----------------------------|
@@ -188,7 +190,7 @@ Example Body
 
 Updates a specific row into the database. Requires at least one parameters `company`, `address`, or `number` parameter along with the specific `id` row to update.
 
-## 📘 `propertiesManNumbers` Put Update Parameters
+## `propertiesManNumbers` Put Update Parameters
 
 | Name           | Type   | In   | Required  | Description                |
 |----------------|--------|------|-----------|----------------------------|
@@ -210,7 +212,7 @@ Example Body
 
 Deletes a specific row into the database. Requires the specific `id` row or an array of `id`s.
 
-## 📘 `propertiesManNumbers` Put Update Parameters
+## `propertiesManNumbers` Put Update Parameters
 
 | Name           | Type   | In   | Required | Description                |
 |----------------|--------|------|----------|----------------------------|
@@ -252,7 +254,7 @@ Retrieve schedule data from the database.
 - With `id`: returns the row with that ID.
 - With `property_id`: returns all schedules associated with that property.
 
-#### 📘 Query Parameters
+#### Query Parameters
 
 | Name           | Type   | In    | Required | Description                             |
 |----------------|--------|-------|----------|-----------------------------------------|
@@ -300,7 +302,7 @@ Requires:
 - `startTime`, `endTime`, `property_id`
 - At least one role flag: `technician`, `tenant`, `landlord`, or `agent`
 
-#### 📘 Request Body
+#### Request Body
 
 | Name             | Type    | Required | Description                         |
 |------------------|---------|----------|-------------------------------------|
@@ -344,7 +346,7 @@ Requires:
 - `id`
 - At least one field to update
 
-#### 📘 Request Body
+#### Request Body
 
 | Name             | Type   | Required | Description                         |
 |------------------|--------|----------|-------------------------------------|
@@ -381,7 +383,7 @@ Requires:
 
 Delete schedule entries by ID or list of IDs.
 
-#### 📘 Request Body
+#### Request Body
 
 | Name | Type        | Required | Description                      |
 |------|-------------|----------|----------------------------------|
@@ -591,6 +593,276 @@ Deletes one or more technician records.
 #### Error Responses
 
 - `400`: Missing or invalid `id`, including one non-existent ID
+- `500`: Server/database error
+
+### GET /propertiesTenant
+
+Retrieves property ids by tenants.
+
+## propertiesTenant Table Schema
+
+| Column Name         | Data Type        | Description                                       |
+|---------------------|------------------|---------------------------------------------------|
+| id                  | int(11)          | Primary key, auto-incremented ID                  |
+| url                 | text             | URL associated with the property                  |
+| party_link          | text             | Link to party details                             |
+| visited             | int(11)          | Visited status 0/1                                |
+| whatsapp            | text             | WhatsApp contact info                             |
+| tenant              | text             | Tenant name or ID                                 |
+| landlord            | text             | Landlord name or ID                               |
+| house_type          | int(11)          | House type code                                   |
+| bedroom             | text             | Bedroom description                               |
+| bedOther            | text             | Other bed details                                 |
+| property            | text             | Property name or description                      |
+| address             | text             | Full street address                               |
+| unitNumber          | text             | Unit or suite number                              |
+| postal_code         | text             | Postal/ZIP code                                   |
+| city                | text             | City name                                         |
+| cityName            | text             | Alternate city name (if any)                      |
+| province            | text             | Province or state                                 |
+| propertyTax         | text             | Property tax amount                               |
+| maintenanceFee      | text             | Maintenance fee                                   |
+| pmNumber            | text             | Property manager phone number                     |
+| pmCompany           | text             | Property management company name                  |
+| mortgage            | text             | Mortgage amount or status                         |
+| propMonthFee        | text             | Monthly property fee                              |
+| balance             | text             | Outstanding balance                               |
+| phone               | text             | Tenant phone number                               |
+| email               | text             | Tenant email address                              |
+| rent                | text             | Rent amount                                       |
+| lease_starts        | text             | Lease start date                                  |
+| lease_ends          | text             | Lease end date                                    |
+| rent_type           | text             | Type of rent (e.g., fixed, variable)              |
+| type                | text             | General category/type                             |
+| credit_score        | text             | Credit score of tenant                            |
+| income              | text             | Reported income                                   |
+| total_occupants     | text             | Number of people living in the unit               |
+| recurring_invoice   | text             | Recurring invoice status/info                     |
+| next_invoice        | text             | Date of next invoice                              |
+| payment_due         | text             | Payment due date                                  |
+| safety_deposit      | text             | Safety deposit amount                             |
+| extra_deposit       | text             | Additional deposit amount                         |
+| rent_increase       | text             | Upcoming or past rent increase info               |
+| policy_number       | text             | Insurance policy number                           |
+| notes               | text             | Miscellaneous notes                               |
+| background_color    | varchar(50)      | Theme background color                            |
+| primary_color       | varchar(50)      | Primary theme color                               |
+| second_color        | varchar(50)      | Secondary theme color                             |
+| third_color         | varchar(50)      | Tertiary theme color                              |
+| text_color          | varchar(50)      | Primary text color                                |
+| text_color2         | varchar(50)      | Secondary text color                              |
+| background2_color   | varchar(50)      | Additional background color                       |
+| background3_color   | varchar(50)      | Another background layer color                    |
+| date                | date             | Date associated with the record                   |
+| secondary_token     | varchar(255)     | Optional token (e.g., auth/session)               |
+| user_id             | int(11)          | Foreign key referencing user                      |
+| tenant_id           | int(11)          | Foreign key referencing tenant                    |
+| project_id          | int(11)          | Foreign key referencing project                   |
+| createdTimestamp    | timestamp        | Timestamp of when record was created              |
+
+
+#### Query Parameters
+
+| Parameter   | Type   | Required | Description             |
+|-------------|--------|----------|-------------------------|
+| `id`        | string | No       | Fetch tenant by ID      |
+| `user_id`   | string | No       | Fetch tenant by user ID |
+
+#### Behavior
+
+- Only **1** query parameter allowed.
+- Allowed parameters: `id`, `user_id`.
+- Any other combination returns 400 Bad Request.
+- If no data found: returns 400 with message `"Data Not Found"`.
+
+#### Example Request
+
+```http
+GET /tenantList?id=123
+```
+
+#### Example Response
+
+```json
+[
+  {
+    "id": 123,
+    "tenant": "John Doe",
+    "address": "123 Main St",
+    "email": "john@example.com",
+    "phone": "1234567890"
+    // ...
+  }
+]
+```
+
+---
+
+### POST /tenantList
+
+Creates a new tenant record.
+
+#### Required Fields
+
+| Field     | Type   | Required | Notes                         |
+|-----------|--------|----------|-------------------------------|
+| `user_id` | string | Yes      | Owner of the tenant record    |
+
+#### Optional Fields
+
+| Field               | Data Type        |
+|---------------------|------------------|
+| url                 | text             |
+| party_link          | text             |
+| visited             | int(11)          |
+| whatsapp            | text             |
+| tenant              | text             |
+| landlord            | text             |
+| house_type          | int(11)          |
+| bedroom             | text             |
+| bedOther            | text             |
+| property            | text             |
+| address             | text             |
+| unitNumber          | text             |
+| postal_code         | text             |
+| city                | text             |
+| cityName            | text             |
+| province            | text             |
+| propertyTax         | text             |
+| maintenanceFee      | text             |
+| pmNumber            | text             |
+| pmCompany           | text             |
+| mortgage            | text             |
+| propMonthFee        | text             |
+| balance             | text             |
+| phone               | text             |
+| email               | text             |
+| rent                | text             |
+| lease_starts        | text             |
+| lease_ends          | text             |
+| rent_type           | text             |
+| type                | text             |
+| credit_score        | text             |
+| income              | text             |
+| total_occupants     | text             |
+| recurring_invoice   | text             |
+| next_invoice        | text             |
+| payment_due         | text             |
+| safety_deposit      | text             |
+| extra_deposit       | text             |
+| rent_increase       | text             |
+| policy_number       | text             |
+| notes               | text             |
+| background_color    | varchar(50)      |
+| primary_color       | varchar(50)      |
+| second_color        | varchar(50)      |
+| third_color         | varchar(50)      |
+| text_color          | varchar(50)      |
+| text_color2         | varchar(50)      |
+| background2_color   | varchar(50)      |
+| background3_color   | varchar(50)      |
+| date                | date             |
+| secondary_token     | varchar(255)     |
+| user_id             | int(11)          |
+| tenant_id           | int(11)          |
+| project_id          | int(11)          |
+| createdTimestamp    | timestamp        |
+
+#### Example Request Body
+
+```json
+{
+  "user_id": "789",
+  "tenant": "Jane Smith",
+  "email": "jane@example.com",
+  "address": "456 Queen St",
+  "city": "Toronto"
+}
+```
+
+#### Success Response
+
+```json
+{ "message": "Insert successful" }
+```
+
+#### Error Responses
+
+- `400`: Missing `user_id`
+- `500`: Server/database error
+
+---
+
+### PUT /tenantList
+
+Updates an existing tenant record.
+
+#### Required Field
+
+| Field | Type   | Required | Description               |
+|-------|--------|----------|---------------------------|
+| `id`  | string | Yes      | ID of the record to update|
+
+#### Updatable Fields
+
+Same as optional fields from the POST method.
+
+#### Behavior
+
+- Requires a valid existing `id`
+- At least one updatable field must be included
+
+#### Example Request Body
+
+```json
+{
+  "id": 123,
+  "email": "newemail@example.com",
+  "notes": "Updated tenant notes"
+}
+```
+
+#### Success Response
+
+```json
+{ "message": "Update successful" }
+```
+
+#### Error Responses
+
+- `400`: Missing or invalid `id`, or no update fields provided
+- `500`: Server/database error
+
+---
+
+### DELETE /propertiesTenant
+
+Deletes one or more tenant records.
+
+#### Request Body
+
+```json
+{ "id": 123 }
+```
+
+```json
+{ "id": [123, 124, 125] }
+```
+
+#### Behavior
+
+- Accepts a single `id` or array of IDs
+- Validates that all IDs exist before deletion
+
+#### Success Response
+
+```json
+{ "message": "Deletion successful" }
+```
+
+#### Error Responses
+
+- `400`: Missing or invalid `id`, including one non-existent or invalid type
 - `500`: Server/database error
 
 
