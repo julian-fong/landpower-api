@@ -112,7 +112,7 @@ Retrieve property chats in the database. Specify either the `id`, `user_id` or `
 | `id`         | int | path | No       | Row ID                     | `/propertiesChat/{id}`         |
 | `user_id`    | string | path | No       | User ID for the property   | `/propertiesChat/{user_id}`    |
 | `property_id`| string | path | No       | Property ID                | `/propertiesChat/{property_id}`|
-
+| `user_id` + `property_id` | path | string | No | Fetch records matching both fields      | `/propertiesChat/{property_id}&{user_id}` |
 
 #### Response
 - `200 OK`: JSON property object
@@ -219,7 +219,7 @@ Example Body
 
 ### GET /propertiesManNumbers/
 
-Retrieve property chats in the database. Specify either the `id`, `user_id` or `property_id` parameter or both the `user_id` and `property_id` parameters together to retrieve a specific chat log for a user.
+Retrieve property chats in the database. Specify either the `id`, `user_id` or `property_id` parameter or both the `user_id` and `property_id` parameters together to retrieve a specific log for a user on a certain property.
 
 ## `propertiesManNumbers` Path Parameters
 
@@ -229,7 +229,7 @@ Retrieve property chats in the database. Specify either the `id`, `user_id` or `
 | `company`    | string | path | No       | Company Name               | `/propertiesManNumbers/{company}`|
 | `address`    | string | path | No       | Address of the company     | `/propertiesManNumbers/{address}`|
 | `number`     | string | path | No       | Phone Number of the company| `/propertiesManNumbers/{number}` |
-
+| `user_id` + `property_id` | path | string | No | Fetch records matching both fields      | `/propertiesManNumbers/{property_id}&{user_id}` |
 
 #### Response
 - `200 OK`: JSON property object
@@ -325,10 +325,10 @@ Example Body
 | title               | varchar(50)   | Title of the record or event      |
 | startTime           | varchar(50)   | Start time (stored as string)     |
 | endTime             | varchar(50)   | End time (stored as string)       |
-| technician          | int(11)       | Technician ID                     |
-| tenant              | int(11)       | Tenant ID                        |
-| landlord            | int(11)       | Landlord ID                      |
-| agent               | int(11)       | Agent ID                        |
+| technician          | int(11)       | Boolean indicating Technician status                   |
+| tenant              | int(11)       | Boolean indicating Tenant status                      |
+| landlord            | int(11)       | Boolean indicating Landlord status                     |
+| agent               | int(11)       | Boolean indicating Agent status                        |
 | technicians_id | int(11)       | Index/reference for technician   |
 | property_id    | int(11)       | Index/reference for property      |
 
@@ -352,6 +352,7 @@ Retrieve schedule data from the database.
 |----------------|--------|-------|----------|-----------------------------------------|
 | `id`           | int    | query | No       | Retrieve a specific schedule by ID      |
 | `property_id`  | int    | query | No       | Filter schedules by associated property |
+
 
 #### Example Request
 
@@ -522,9 +523,9 @@ Handles CRUD operations for property technician entries.
 | email                | varchar(255)  | Email address                  |
 | website              | varchar(255)  | Website URL                    |
 | quotation            | int(11)       | Quotation amount (numeric)     |
-| offerQuote           | varchar(255)  | Offer or quote description     |
+| offerQuote           | varchar(255)  | Quote offer amount (numeric)   |
 | scheduleTechnician   | varchar(255)  | Technician schedule info       |
-| visited              | int(11)       | Visit count or flag            |
+| visited              | int(11)       | Visit count boolean          |
 | property_id    | int(11)       | Foreign key for property       |
 | maintenance_id  | int(11)       | Foreign key for maintenance job|
 
@@ -563,8 +564,8 @@ GET /propertiesTechnicians?maintenance_id=123
     "id": 4,
     "name": "John Doe",
     "company": "Tech Solutions",
-    "property_id": "P100",
-    "maintenance_id": "MT123"
+    "property_id": "100",
+    "maintenance_id": "123"
   }
 ]
 ```
@@ -591,12 +592,11 @@ Creates a new technician record.
 
 ```json
 {
-  "url": "https://example.com/file.pdf",
   "name": "Jane Smith",
   "company": "FixIt Inc",
   "phone": "1234567890",
-  "property_id": "P200",
-  "maintenance_id": "MT456"
+  "property_id": "200",
+  "maintenance_id": "456"
 }
 ```
 
@@ -629,8 +629,8 @@ Updates a technician record.
 | `email`              | string  | No       | Email                           |
 | `website`            | string  | No       | Website URL                     |
 | `quotation`          | number  | No       | Quotation amount                |
-| `offerQuote`         | string  | No       | Offer or quote notes            |
-| `scheduleTechnician` | string  | No       | Schedule time/date              |
+| `offerQuote`         | string  | No       | Quote amount          |
+| `scheduleTechnician` | string  | No       |             |
 | `visited`            | int     | No       | 0 or 1                          |
 | `property_id`        | string  | No       | Linked property ID              |
 | `maintenance_id`     | string  | No       | Linked maintenance ID           |
@@ -641,7 +641,6 @@ Updates a technician record.
 {
   "id": 3,
   "visited": 1,
-  "offerQuote": "Updated quote details",
   "email": "newemail@example.com"
 }
 ```
@@ -701,10 +700,10 @@ Retrieves property ids by tenants.
 | party_link          | text             | Link to party details                             |
 | visited             | int(11)          | Visited status 0/1                                |
 | whatsapp            | text             | WhatsApp contact info                             |
-| tenant              | text             | Tenant name or ID                                 |
-| landlord            | text             | Landlord name or ID                               |
+| tenant              | text             | Tenant name                                 |
+| landlord            | text             | Landlord name                             |
 | house_type          | int(11)          | House type code                                   |
-| bedroom             | text             | Bedroom description                               |
+| bedroom             | text             | Number of Bedrooms                             |
 | bedOther            | text             | Other bed details                                 |
 | property            | text             | Property name or description                      |
 | address             | text             | Full street address                               |
@@ -725,7 +724,7 @@ Retrieves property ids by tenants.
 | rent                | text             | Rent amount                                       |
 | lease_starts        | text             | Lease start date                                  |
 | lease_ends          | text             | Lease end date                                    |
-| rent_type           | text             | Type of rent (e.g., fixed, variable)              |
+| rent_type           | text             | Type of rent             |
 | type                | text             | General category/type                             |
 | credit_score        | text             | Credit score of tenant                            |
 | income              | text             | Reported income                                   |
@@ -780,7 +779,6 @@ GET /propertiesTenant?id=123
 [
   {
     "id": 123,
-    "tenant": "John Doe",
     "address": "123 Main St",
     "email": "john@example.com",
     "phone": "1234567890"
@@ -866,7 +864,6 @@ Creates a new tenant record.
 ```json
 {
   "user_id": "789",
-  "tenant": "Jane Smith",
   "email": "jane@example.com",
   "address": "456 Queen St",
   "city": "Toronto"
@@ -1062,8 +1059,8 @@ GET /tenantAppliances?user_id=123&property_id=456
     "warranty": "2026-05-01",
     "notes": "Installed upstairs",
     "date_created": "2024-04-30",
-    "property_id": "P456",
-    "user_id": "U123"
+    "property_id": "456",
+    "user_id": "123"
   }
 ]
 ```
