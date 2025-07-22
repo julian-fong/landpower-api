@@ -2458,3 +2458,156 @@ Delete one or more invoice records.
 - `400` — Missing or invalid `id`  
 - `500` — Database/server error
 
+## /tenantPayment/
+
+Handles CRUD operations for tenant payment records.
+
+### Table Schema:
+
+| Field        | Type      | Description                              |
+|--------------|-----------|------------------------------------------|
+| idPrimary    | int(11)   | Auto-increment primary key               |
+| rent         | text      | Rent amount                              |
+| status       | text      | Payment status                           |
+| date         | text      | Date of payment                          |
+| status_id    | int(11)   | Status identifier                        |
+| term         | text      | Term of the payment                      |
+| property_id  | int(11)   | Foreign key to a property                |
+| user_id      | int(11)   | Foreign key to a user                    |
+
+---
+
+### GET /tenantPayment/
+
+Fetch tenant payment records by specific query parameters.
+
+#### Query Parameters
+
+| Parameter       | Type   | Required | Description                             |
+|-----------------|--------|----------|-----------------------------------------|
+| `id`            | int    | No       | Fetch a specific record by ID           |
+| `user_id`       | string | No       | Fetch records for a specific user       |
+| `property_id`   | string | No       | Fetch records for a specific property   |
+| `user_id` + `property_id` | string | No | Fetch records matching both fields      |
+
+#### Rules
+
+- You must provide either:
+  - Exactly **1** of `id`, `user_id`, or `property_id`, **or**
+  - Both `user_id` and `property_id`
+
+#### Example Request
+
+```http
+GET /tenantPayment?user_id=123&property_id=456
+```
+
+#### Responses
+
+- `400 Bad Request` — If invalid or missing parameters  
+- `400 Data Not Found` — If no record matches
+
+---
+
+### POST /tenantPayment
+
+Insert a new tenant payment record.
+
+#### Required Fields in Body (JSON)
+
+| Field         | Type   | Required | Description                    |
+|--------------|--------|----------|--------------------------------|
+| `rent`        | string | Yes      | Rent amount                    |
+| `status`      | string | Yes      | Payment status                 |
+| `date`        | string | Yes      | Date of payment                |
+| `status_id`   | string | Yes      | Status identifier              |
+| `term`        | string | Yes      | Term of the payment            |
+| `property_id` | string | Yes      | Associated property ID         |
+| `user_id`     | string | Yes      | Associated user ID             |
+
+#### Example Request
+
+```json
+{
+  "rent": "1800",
+  "status": "Paid",
+  "date": "2025-06-01",
+  "status_id": "1",
+  "term": "Monthly",
+  "property_id": "456",
+  "user_id": "123"
+}
+```
+
+#### Responses
+
+- `200 OK` — Insert successful  
+- `400` — Missing required fields  
+- `500` — Database/server error
+
+---
+
+### PUT /tenantPayment
+
+Update an existing tenant payment record by `id`.
+
+#### Required in Body
+
+- `id`: ID of the row to update  
+- At least one updatable field
+
+#### Updatable Fields
+
+| Field         | Type   | Description                    |
+|--------------|--------|--------------------------------|
+| `rent`        | string | Updated rent amount            |
+| `status`      | string | Updated payment status         |
+| `date`        | string | Updated payment date           |
+| `status_id`   | string | Updated status ID              |
+| `term`        | string | Updated term                   |
+| `property_id` | string | Updated property ID            |
+| `user_id`     | string | Updated user ID                |
+
+#### Example Request
+
+```json
+{
+  "id": 1,
+  "rent": "1900",
+  "status": "Late"
+}
+```
+
+#### Responses
+
+- `200 OK` — Update successful  
+- `400` — Missing or invalid `id`, or no updatable fields  
+- `500` — Database/server error
+
+---
+
+### DELETE /tenantPayment
+
+Delete one or more payment records.
+
+#### Request Body
+
+| Field | Type        | Required | Description                  |
+|-------|-------------|----------|------------------------------|
+| `id`  | int \| int[]| Yes      | ID or array of IDs to delete |
+
+#### Example Request
+
+```json
+{ "id": 1 }
+```
+
+```json
+{ "id": [2, 3, 4] }
+```
+
+#### Responses
+
+- `200 OK` — Deletion successful  
+- `400` — Missing or invalid `id`  
+- `500` — Database/server error
