@@ -197,9 +197,9 @@ Example Body
 {
   "id": 1
 }
+```
 
-// or
-
+```json
 {
   "id": [1, 2, 3]
 }
@@ -306,9 +306,9 @@ Example Body
 {
   "id": 1
 }
+```
 
-// or
-
+```json
 {
   "id": [1, 2, 3]
 }
