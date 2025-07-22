@@ -1672,3 +1672,789 @@ Delete one or more appliance records.
 ```json
 { "message": "Deletion successful" }
 ```
+
+
+## /tenantImage/
+
+Handles CRUD operations for tenant image records.
+
+### Table Schema:
+
+| Field           | Type         | Description                                |
+|-----------------|--------------|--------------------------------------------|
+| idPrimary       | int(11)      | Auto-increment primary key                 |
+| image_name      | varchar(255) | Name of the image or file                  |
+| document        | int(11)      | 1 if document type, otherwise 0            |
+| maintenance     | int(11)      | 1 if maintenance image, otherwise 0        |
+| property_image  | int(11)      | 1 if general property image, otherwise 0   |
+| date            | varchar(50)  | Date of upload (format: YYYY-MM-DD HH:MM:SS am/pm) |
+| property_id     | int(11)      | Foreign key to a property                  |
+| user_id         | int(11)      | Foreign key to a user                      |
+| maintenance_id  | int(11)      | Foreign key to a maintenance record        |
+
+---
+
+### GET /tenantImage/
+
+Fetch tenant image records by specific query parameters.
+
+#### Query Parameters
+
+| Parameter       | Type   | Required | Description                             |
+|-----------------|--------|----------|-----------------------------------------|
+| `id`            | int    | No       | Fetch a specific record by ID           |
+| `user_id`       | string | No       | Fetch records for a specific user       |
+| `property_id`   | string | No       | Fetch records for a specific property   |
+| `user_id` + `property_id` | string | No | Fetch records matching both fields      |
+
+#### Rules
+
+- You must provide either:
+  - Exactly **1** of `id`, `user_id`, or `property_id`, **or**
+  - Both `user_id` and `property_id`
+
+#### Example Request
+
+```http
+GET /tenantImage?user_id=123&property_id=456
+```
+
+#### Example Response
+
+```json
+[
+  {
+    "id": 7,
+    "image_name": "damage1.jpg",
+    "document": 0,
+    "maintenance": 1,
+    "property_image": 0,
+    "date": "2025-06-11 02:30:00 pm",
+    "property_id": "456",
+    "maintenance_id": "789",
+    "user_id": "123"
+  }
+]
+```
+
+#### Responses
+
+- `400 Bad Request` — If invalid or missing parameters  
+- `400 Data Not Found` — If no record matches
+
+---
+
+### POST /tenantImage
+
+Insert a new tenant image record.
+
+#### Required Fields in Body (JSON)
+
+| Field           | Type   | Required | Description                                 |
+|-----------------|--------|----------|---------------------------------------------|
+| `image_name`    | string | Yes      | Name of the file                            |
+| `date`          | string | Yes      | Upload timestamp (YYYY-MM-DD HH:MM:SS am/pm) |
+| `property_id`   | string | Yes      | Associated property ID                      |
+| `maintenance_id`| string | Yes      | Associated maintenance ID                   |
+| `user_id`       | string | Yes      | Associated user ID                          |
+| `document`      | int    | No       | 1 if it's a document (default: 0)           |
+| `maintenance`   | int    | No       | 1 if it's for maintenance (default: 0)      |
+| `property_image`| int    | No       | 1 if it's a property image (default: 0)     |
+
+#### Validation Rules
+
+- At least one of `document`, `maintenance`, or `property_image` must be set to `1`.
+
+#### Example Request Body
+
+```json
+{
+  "image_name": "lease-agreement.pdf",
+  "document": 1,
+  "maintenance": 0,
+  "property_image": 0,
+  "date": "2025-07-01 10:15:00 am",
+  "property_id": "456",
+  "maintenance_id": "789",
+  "user_id": "123"
+}
+```
+
+#### Success Response
+
+```json
+{ "message": "Insert successful" }
+```
+
+#### Errors
+
+- `400` — Missing required fields or no image type specified  
+- `500` — Database/server error
+
+---
+
+### PUT /tenantImage
+
+Update an existing tenant image record by `id`.
+
+#### Required in Body
+
+- `id`: ID of the row to update  
+- At least one updatable field
+
+#### Updatable Fields
+
+| Field           | Type   | Required | Description                                |
+|-----------------|--------|----------|--------------------------------------------|
+| `image_name`    | string | No       | Updated name of the image                  |
+| `document`      | int    | No       | Set to 1 or 0                              |
+| `maintenance`   | int    | No       | Set to 1 or 0                              |
+| `property_image`| int    | No       | Set to 1 or 0                              |
+| `date`          | string | No       | Updated date/time                          |
+| `property_id`   | string | No       | Updated property ID                        |
+| `maintenance_id`| string | No       | Updated maintenance ID                     |
+| `user_id`       | string | No       | Updated user ID                            |
+
+#### Example Request Body
+
+```json
+{
+  "id": 7,
+  "image_name": "updated_image.png",
+  "document": 0
+}
+```
+
+#### Success Response
+
+```json
+{ "message": "Update successful" }
+```
+
+#### Errors
+
+- `400` — Missing `id`, invalid `id`, or no updatable fields  
+- `500` — Database error
+
+---
+
+### DELETE /tenantImage
+
+Delete one or more image records.
+
+#### Request Body
+
+| Field | Type        | Required | Description                      |
+|-------|-------------|----------|----------------------------------|
+| `id`  | int \| int[]| Yes      | ID or array of IDs to delete     |
+
+#### Example Request Body
+
+```json
+{ "id": 7 }
+```
+
+```json
+{ "id": [8, 9, 10] }
+```
+
+#### Success Response
+
+```json
+{ "message": "Deletion successful" }
+```
+
+#### Errors
+
+- `400` — Missing or invalid `id`  
+- `500` — Database/server error
+
+## /tenantInsurance/
+
+Handles CRUD operations for tenant insurance records.
+
+### Table Schema:
+
+| Field           | Type      | Description                                     |
+|-----------------|-----------|-------------------------------------------------|
+| idPrimary       | int(11)   | Auto-increment primary key                      |
+| balance         | text      | Total balance                                   |
+| other_balance   | text      | Any other balance                               |
+| policy          | text      | Policy details or number                        |
+| status          | text      | Payment status (paid/unpaid)                    |
+| renewal         | text      | Renewal date (YYYY-MM-DD)                       |
+| recurring       | text      | Indicates if the insurance is recurring (yes/no)|
+| pay_to          | text      | Who to pay the insurance to                     |
+| insuranceOther  | text      | Additional insurance info (yes/no)              |
+| notes           | text      | Additional notes                                |
+| property_id     | int(11)   | Foreign key to a property                       |
+| user_id         | int(11)   | Foreign key to a user                           |
+| tenant_id       | int(11)   | Foreign key to a tenant                         |
+| date_created    | date      | Date of creation (format: YYYY-MM-DD)          |
+
+---
+
+### GET /tenantInsurance/
+
+Fetch tenant insurance records by specific query parameters.
+
+#### Query Parameters
+
+| Parameter       | Type   | Required | Description                             |
+|-----------------|--------|----------|-----------------------------------------|
+| `id`            | int    | No       | Fetch a specific record by ID           |
+| `user_id`       | string | No       | Fetch records for a specific user       |
+| `property_id`   | string | No       | Fetch records for a specific property   |
+| `user_id` + `property_id` | string | No | Fetch records matching both fields      |
+
+#### Rules
+
+- You must provide either:
+  - Exactly **1** of `id`, `user_id`, or `property_id`, **or**
+  - Both `user_id` and `property_id`
+
+#### Example Request
+
+```http
+GET /tenantInsurance?user_id=123&property_id=456
+```
+
+#### Example Response
+
+```json
+[
+  {
+    "id": 1,
+    "balance": "1200",
+    "other_balance": "300",
+    "policy": "ABC123",
+    "status": "paid",
+    "renewal": "2025-12-01",
+    "recurring": "yes",
+    "pay_to": "XYZ Insurance",
+    "insuranceOther": "no",
+    "notes": "Annual plan",
+    "user_id": "123",
+    "property_id": "456",
+    "tenant_id": "789",
+    "date_created": "2025-06-15"
+  }
+]
+```
+
+#### Responses
+
+- `400 Bad Request` — If invalid or missing parameters  
+- `400 Data Not Found` — If no record matches
+
+---
+
+### POST /tenantInsurance
+
+Insert a new tenant insurance record.
+
+#### Required Fields in Body (JSON)
+
+| Field           | Type   | Required | Description                            |
+|----------------|--------|----------|----------------------------------------|
+| `balance`       | string | No       | Total balance                          |
+| `other_balance` | string | No       | Additional balance                     |
+| `policy`        | string | No       | Policy details                         |
+| `status`        | string | No       | Payment status (paid/unpaid)           |
+| `renewal`       | string | No       | Renewal date (YYYY-MM-DD)              |
+| `recurring`     | string | No       | Recurring policy (yes/no)              |
+| `pay_to`        | string | No       | Payable to                             |
+| `insuranceOther`| string | No       | Other insurance flag (yes/no)          |
+| `notes`         | string | No       | Additional notes                       |
+| `property_id`   | string | Yes      | Associated property ID                 |
+| `user_id`       | string | Yes      | Associated user ID                     |
+| `tenant_id`     | string | No       | Tenant ID                              |
+| `date_created`  | string | Yes      | Creation date (YYYY-MM-DD)             |
+
+#### Example Request Body
+
+```json
+{
+  "balance": "1200",
+  "other_balance": "300",
+  "policy": "ABC123",
+  "status": "paid",
+  "renewal": "2025-12-01",
+  "recurring": "yes",
+  "pay_to": "XYZ Insurance",
+  "insuranceOther": "no",
+  "notes": "Annual plan",
+  "property_id": "456",
+  "user_id": "123",
+  "tenant_id": "789",
+  "date_created": "2025-06-15"
+}
+```
+
+#### Success Response
+
+```json
+{ "message": "Insert successful" }
+```
+
+#### Errors
+
+- `400` — Missing required fields  
+- `500` — Database/server error
+
+---
+
+### PUT /tenantInsurance
+
+Update an existing tenant insurance record by `id`.
+
+#### Required in Body
+
+- `id`: ID of the row to update  
+- At least one updatable field
+
+#### Updatable Fields
+
+| Field           | Type   | Description                           |
+|-----------------|--------|---------------------------------------|
+| `balance`       | string | Updated balance                       |
+| `other_balance` | string | Updated other balance                 |
+| `policy`        | string | Updated policy                        |
+| `status`        | string | Updated status                        |
+| `renewal`       | string | Updated renewal date (YYYY-MM-DD)     |
+| `recurring`     | string | yes/no                                |
+| `pay_to`        | string | Updated pay_to value                  |
+| `insuranceOther`| string | Updated insuranceOther value          |
+| `notes`         | string | Updated notes                         |
+| `tenant_id`     | string | Updated tenant ID                     |
+| `property_id`   | string | Updated property ID                   |
+| `user_id`       | string | Updated user ID                       |
+| `date_created`  | string | Updated date                          |
+
+#### Example Request Body
+
+```json
+{
+  "id": 1,
+  "balance": "1500",
+  "status": "unpaid"
+}
+```
+
+#### Success Response
+
+```json
+{ "message": "Update successful" }
+```
+
+#### Errors
+
+- `400` — Missing `id`, invalid `id`, or no updatable fields  
+- `500` — Database error
+
+---
+
+### DELETE /tenantInsurance
+
+Delete one or more insurance records.
+
+#### Request Body
+
+| Field | Type        | Required | Description                      |
+|-------|-------------|----------|----------------------------------|
+| `id`  | int \| int[]| Yes      | ID or array of IDs to delete     |
+
+#### Example Request Body
+
+```json
+{ "id": 1 }
+```
+
+```json
+{ "id": [2, 3, 4] }
+```
+
+#### Success Response
+
+```json
+{ "message": "Deletion successful" }
+```
+
+#### Errors
+
+- `400` — Missing or invalid `id`  
+- `500` — Database/server error
+
+
+## /tenantInvoice/
+
+Handles CRUD operations for tenant invoice records.
+
+### Table Schema:
+
+| Field               | Type         | Description                                 |
+|--------------------|--------------|---------------------------------------------|
+| idPrimary           | int(11)      | Auto-increment primary key                  |
+| file_name           | varchar(255) | Name of the file                            |
+| policy_number       | varchar(255) | Policy number                               |
+| address             | varchar(255) | Address associated with the invoice         |
+| tenant              | varchar(255) | Tenant name or ID                           |
+| payment_for         | varchar(255) | Description of what payment is for          |
+| term_type           | varchar(50)  | Term type (e.g., fixed, monthly)            |
+| lease_starts        | date         | Lease start date (YYYY-MM-DD)               |
+| lease_ends          | date         | Lease end date (YYYY-MM-DD)                 |
+| notes               | text         | Additional notes                            |
+| amount              | varchar(255) | Invoice amount                              |
+| landlord            | varchar(255) | Landlord name or ID                         |
+| landlord_signature  | varchar(255) | Signature or agreement confirmation         |
+| date                | date         | Date the invoice was created (YYYY-MM-DD)   |
+| property_id         | int(11)      | Foreign key to a property                   |
+| user_id             | int(11)      | Foreign key to a user                       |
+
+---
+
+### GET /tenantInvoice/
+
+Fetch tenant invoice records by specific query parameters.
+
+#### Query Parameters
+
+| Parameter       | Type   | Required | Description                             |
+|-----------------|--------|----------|-----------------------------------------|
+| `id`            | int    | No       | Fetch a specific record by ID           |
+| `user_id`       | string | No       | Fetch records for a specific user       |
+| `property_id`   | string | No       | Fetch records for a specific property   |
+| `user_id` + `property_id` | string | No | Fetch records matching both fields      |
+
+#### Rules
+
+- You must provide either:
+  - Exactly **1** of `id`, `user_id`, or `property_id`, **or**
+  - Both `user_id` and `property_id`
+
+#### Example Request
+
+```http
+GET /tenantInvoice?user_id=123&property_id=456
+```
+
+#### Responses
+
+- `400 Bad Request` — If invalid or missing parameters  
+- `400 Data Not Found` — If no record matches
+
+---
+
+### POST /tenantInvoice
+
+Insert a new tenant invoice record.
+
+#### Required Fields in Body (JSON)
+
+| Field              | Type   | Required | Description                              |
+|-------------------|--------|----------|------------------------------------------|
+| `file_name`        | string | No       | File name                                |
+| `policy_number`    | string | No       | Policy number                            |
+| `address`          | string | Yes      | Address                                   |
+| `tenant`           | string | Yes      | Tenant name or ID                         |
+| `payment_for`      | string | No       | Description of payment                    |
+| `term_type`        | string | No       | Term type                                 |
+| `lease_starts`     | string | Yes      | Start date (YYYY-MM-DD)                   |
+| `lease_ends`       | string | Yes      | End date (YYYY-MM-DD)                     |
+| `notes`            | string | No       | Additional notes                          |
+| `amount`           | string | Yes      | Amount                                    |
+| `landlord`         | string | Yes      | Landlord                                  |
+| `landlord_signature`| string| No       | Landlord's signature                      |
+| `date`             | string | Yes      | Creation date (YYYY-MM-DD)                |
+| `property_id`      | string | Yes      | Associated property ID                    |
+| `user_id`          | string | Yes      | Associated user ID                        |
+
+#### Example Request
+
+```json
+{
+  "file_name": "invoice1.pdf",
+  "policy_number": "PN-2025-01",
+  "address": "123 Main St",
+  "tenant": "John Doe",
+  "payment_for": "Insurance",
+  "term_type": "Annual",
+  "lease_starts": "2025-01-01",
+  "lease_ends": "2025-12-31",
+  "notes": "First invoice of year",
+  "amount": "1500",
+  "landlord": "Jane Smith",
+  "landlord_signature": "Signed",
+  "date": "2025-06-01",
+  "property_id": "456",
+  "user_id": "123"
+}
+```
+
+#### Responses
+
+- `200 OK` — Insert successful  
+- `400` — Missing required fields  
+- `500` — Database/server error
+
+---
+
+### PUT /tenantInvoice
+
+Update an existing tenant invoice record by `id`.
+
+#### Required in Body
+
+- `id`: ID of the row to update  
+- At least one updatable field
+
+#### Updatable Fields
+
+| Field               | Type   | Description                         |
+|--------------------|--------|-------------------------------------|
+| `file_name`         | string | Updated file name                   |
+| `policy_number`     | string | Updated policy number               |
+| `address`           | string | Updated address                     |
+| `tenant`            | string | Updated tenant                      |
+| `payment_for`       | string | Updated payment description         |
+| `term_type`         | string | Updated term type                   |
+| `lease_starts`      | string | Updated lease start date            |
+| `lease_ends`        | string | Updated lease end date              |
+| `notes`             | string | Updated notes                       |
+| `amount`            | string | Updated amount                      |
+| `landlord`          | string | Updated landlord                    |
+| `landlord_signature`| string | Updated signature                   |
+| `date`              | string | Updated invoice date                |
+| `property_id`       | string | Updated property ID                 |
+| `user_id`           | string | Updated user ID                     |
+
+#### Example Request
+
+```json
+{
+  "id": 1,
+  "amount": "1600",
+  "notes": "Revised amount"
+}
+```
+
+#### Responses
+
+- `200 OK` — Update successful  
+- `400` — Missing or invalid `id`, or no updatable fields  
+- `500` — Database/server error
+
+---
+
+### DELETE /tenantInvoice
+
+Delete one or more invoice records.
+
+#### Request Body
+
+| Field | Type        | Required | Description                  |
+|-------|-------------|----------|------------------------------|
+| `id`  | int \| int[]| Yes      | ID or array of IDs to delete |
+
+#### Example Request
+
+```json
+{ "id": 1 }
+```
+
+```json
+{ "id": [2, 3, 4] }
+```
+
+#### Responses
+
+- `200 OK` — Deletion successful  
+- `400` — Missing or invalid `id`  
+- `500` — Database/server error
+
+## /tenantMaintenance/
+
+Handles CRUD operations for tenant invoice records.
+
+### Table Schema:
+
+| Field               | Type         | Description                                 |
+|--------------------|--------------|---------------------------------------------|
+| id           | int(11)      | Auto-increment primary key                  |
+| url           | varchar(255) | URL of the file                          |
+| category       | varchar(255) | Category of Maintenance                            |
+| cat_other             | varchar(255) | Any other category information        |
+| contractor              | varchar(255) | Contractor Name                         |
+| contractorOther         | varchar(255) | Any other contractor information          |
+| message           | text  | Message contained in maintenance         |
+| agentLandQuote        | 	varchar(255)	       | Any quotes involved           |
+| cost          | 	varchar(255)	   | Cost of maintenance                |
+| quoteOffer               | 	varchar(255)	        | Quote Offer contained                         |
+| scheduleTechnician              | varchar(255) |                             |
+| quoteApprove            | 	int(11) | Boolean for Approval of quote                      |
+| quoteDecline  | 	int(11) | Boolean for Decline of quote         |
+| completed                | 	int(11)         | Boolean for whether or not maintenance was completed   |
+| technician           | int(11)      | Boolean for whether message was from technician               |
+| agent           | int(11)      | Boolean for whether message was from agent                  |
+| property_id         | int(11)      | Foreign key to a property                   |
+| user_id             | int(11)      | Foreign key to a user                       |
+| date_created             | varchar(50)      | Date created (YYYY-MM-DD HH:MM:SS am/pm)            |
+
+---
+
+### GET /tenantMaintenance/
+
+Fetch tenant invoice records by specific query parameters.
+
+#### Query Parameters
+
+| Parameter       | Type   | Required | Description                             |
+|-----------------|--------|----------|-----------------------------------------|
+| `id`            | int    | No       | Fetch a specific record by ID           |
+| `user_id`       | string | No       | Fetch records for a specific user       |
+| `property_id`   | string | No       | Fetch records for a specific property   |
+| `user_id` + `property_id` | string | No | Fetch records matching both fields      |
+
+#### Rules
+
+- You must provide either:
+  - Exactly **1** of `id`, `user_id`, or `property_id`, **or**
+  - Both `user_id` and `property_id`
+
+#### Example Request
+
+```http
+GET /tenantMaintenance?user_id=123&property_id=456
+```
+
+#### Responses
+
+- `400 Bad Request` — If invalid or missing parameters  
+- `400 Data Not Found` — If no record matches
+
+---
+
+### POST /tenantMaintenance
+
+Insert a new tenant invoice record.
+
+#### Required Fields in Body (JSON)
+
+| Field              | Type   | Required | Description                              |
+|-------------------|--------|----------|------------------------------------------|
+| url           | varchar(255) | No | URL of the file                          |
+| category       | varchar(255) | No | Category of Maintenance                            |
+| cat_other             | varchar(255) | No |  Any other category information        |
+| contractor              | varchar(255) | No | Contractor Name                         |
+| contractorOther         | varchar(255) | No | Any other contractor information          |
+| message           | text  | No | Message contained in maintenance         |
+| agentLandQuote        | 	varchar(255)	       | No | Any quotes involved           |
+| cost          | 	varchar(255)	   | No | Cost of maintenance                |
+| quoteOffer               | 	varchar(255)	        |No | Quote Offer contained                         |
+| scheduleTechnician              | varchar(255) | No |                             |
+| quoteApprove            | 	int(11) | No | Boolean for Approval of quote                      |
+| quoteDecline  | 	int(11) | No | Boolean for Decline of quote         |
+| completed                | 	int(11)         | No | Boolean for whether or not maintenance was completed   |
+| technician           | int(11)      | No | Boolean for whether message was from technician               |
+| agent           | int(11)      | No | Boolean for whether message was from agent                  |
+| property_id         | int(11)      | Yes | Foreign key to a property                   |
+| user_id             | int(11)      | Yes | Foreign key to a user                       |
+| date_created             | varchar(50)      | Yes | Date created (YYYY-MM-DD HH:MM:SS am/pm)            |
+
+Note: One of agent or technician must be set to 1.
+
+#### Example Request
+
+```json
+{
+  "message": "Please fix my stove",
+  "technician": 1,
+  "date_created": "2025-06-01",
+  "property_id": "456",
+  "user_id": "123"
+}
+```
+
+#### Responses
+
+- `200 OK` — Insert successful  
+- `400` — Missing required fields  
+- `500` — Database/server error
+
+---
+
+### PUT /tenantMaintenance
+
+Update an existing tenant invoice record by `id`.
+
+#### Required in Body
+
+- `id`: ID of the row to update  
+- At least one updatable field
+
+#### Updatable Fields
+
+| Field               | Type   | Description                         |
+|--------------------|--------|-------------------------------------|
+| url           | varchar(255) | URL of the file                          |
+| category       | varchar(255) | Category of Maintenance                            |
+| cat_other             | varchar(255) | Any other category information        |
+| contractor              | varchar(255) | Contractor Name                         |
+| contractorOther         | varchar(255) | Any other contractor information          |
+| message           | text  | Message contained in maintenance         |
+| agentLandQuote        | 	varchar(255)	       | Any quotes involved           |
+| cost          | 	varchar(255)	   | Cost of maintenance                |
+| quoteOffer               | 	varchar(255)	        | Quote Offer contained                         |
+| scheduleTechnician              | varchar(255) |                             |
+| quoteApprove            | 	int(11) | Boolean for Approval of quote                      |
+| quoteDecline  | 	int(11) | Boolean for Decline of quote         |
+| completed                | 	int(11)         | Boolean for whether or not maintenance was completed   |
+| technician           | int(11)      | Boolean for whether message was from technician               |
+| agent           | int(11)      | Boolean for whether message was from agent                  |
+| property_id         | int(11)      | Foreign key to a property                   |
+| user_id             | int(11)      | Foreign key to a user                       |
+| date_created             | varchar(50)      | Date created (YYYY-MM-DD HH:MM:SS am/pm)            |
+
+#### Example Request
+
+```json
+{
+  "id": 1,
+  "url": "new url",
+}
+```
+
+#### Responses
+
+- `200 OK` — Update successful  
+- `400` — Missing or invalid `id`, or no updatable fields  
+- `500` — Database/server error
+
+---
+
+### DELETE /tenantMaintenance
+
+Delete one or more invoice records.
+
+#### Request Body
+
+| Field | Type        | Required | Description                  |
+|-------|-------------|----------|------------------------------|
+| `id`  | int \| int[]| Yes      | ID or array of IDs to delete |
+
+#### Example Request
+
+```json
+{ "id": 1 }
+```
+
+```json
+{ "id": [2, 3, 4] }
+```
+
+#### Responses
+
+- `200 OK` — Deletion successful  
+- `400` — Missing or invalid `id`  
+- `500` — Database/server error
+
