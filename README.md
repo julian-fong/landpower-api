@@ -975,6 +975,8 @@ Using this endpoint also retrieves information from other tables such as
 | `id`         | int | path | No       | Row ID                     | `/queryProjects/{id}`         |
 | `projectName`    | string | path | No       | User ID for the property   | `/queryProjects/{projectName}`    |
 
+Note : If no parametes are specified, will return all current projects in system.
+
 ## /register
 
 Endpoint to insert new users into the database - uses the `users` table
