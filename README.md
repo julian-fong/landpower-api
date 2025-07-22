@@ -240,11 +240,10 @@ Example Result
 ```json
 [
     {
-        "id": 1,
-        "message": "Hi, is this place available?",
-        "date_created": "2025-07-15 12:34:56 pm",
-        "property_id": 2,
-        "user_id": 3
+      "company": "Test Company 123",
+      "address": "test",
+      "id": 10,
+      "number": "12345"
     }
 ]
 ```
@@ -982,7 +981,7 @@ Endpoint to insert new users into the database - uses the `users` table
 
 ### POST /register
 
-Insert a new appliance record.
+Insert a new account record.
 
 #### Required Fields in Body (JSON)
 
@@ -992,10 +991,11 @@ Insert a new appliance record.
 | `user_pass`     | string | Yes       | password for the account         |
 | `user_email`     | string | Yes       | email of the account         |
 | `user_date`     | string | No       |  Date of registration      |
-| `user_level`     | string | Yes       | role of the account   |
+| `user_level`     | string | No       | role of the account   |
 
 Note:
 
+`user_level` is defaulted to 'Regular'
 `user_date` is of format YYYY-MM-DD HH:MM:SS
 
 ## /tenantAppliances
@@ -2557,7 +2557,7 @@ Delete one or more payment records.
 
 ### PUT /users
 
-Use this endpoint to update certain fields of an account
+Use this endpoint to update certain fields of an account, or delete account records
 
 Note:
 
@@ -2568,6 +2568,8 @@ Possible values for the field `user_level` are
 - Agent
 - Regular
 - Tenant
+
+This endpoint is only used to update or delete account records, use the login endpoint to verify credentials.
 
 #### Required in Body
 
@@ -2586,13 +2588,23 @@ Possible values for the field `user_level` are
 
 ### DELETE /users
 
-Delete one or more appliance records.
+Delete one or account records.
 
 #### Request Body
 
 | Field | Type        | Required | Description                    |
 |-------|-------------|----------|--------------------------------|
 | `id`  | int \| int[]| Yes      | ID or array of IDs to delete   |
+
+#### Example Request
+
+```json
+{
+  "id": 1,
+  "user_name": "new user name"
+  "user_email": "newemail@gmail.com"
+}
+```
 
 #### Example Request Body
 
