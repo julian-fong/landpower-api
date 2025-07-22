@@ -1618,62 +1618,6 @@ Multiple IDs:
 
 ---
 
-## users
-
-### PUT /users
-
-Use this endpoint to update certain fields of an account
-
-Note:
-
-Possible values for the field `user_level` are 
-
-- Super
-- Mod
-- Agent
-- Regular
-- Tenant
-
-#### Required in Body
-
-- `id`: ID of the row to update
-- At least one updatable field
-
-#### Updatable Fields
-
-| Field           | Type   | Required | Description                       |
-|-----------------|--------|----------|-----------------------------------|
-| `user_name`     | string | No       | username of the account           |
-| `user_pass`     | string | No       | Password of the account           |
-| `user_email`    | int    | No       | Email address                     |
-| `user_date`     | string | No       | user date of the account          |
-| `user_level`    | string | No       | User access                       |
-
-### DELETE /users
-
-Delete one or more appliance records.
-
-#### Request Body
-
-| Field | Type        | Required | Description                    |
-|-------|-------------|----------|--------------------------------|
-| `id`  | int \| int[]| Yes      | ID or array of IDs to delete   |
-
-#### Example Request Body
-
-```json
-{ "id": 5 }
-```
-
-```json
-{ "id": [6, 7, 8] }
-```
-
-```json
-{ "message": "Deletion successful" }
-```
-
-
 ## /tenantImage/
 
 Handles CRUD operations for tenant image records.
@@ -2611,3 +2555,58 @@ Delete one or more payment records.
 - `200 OK` — Deletion successful  
 - `400` — Missing or invalid `id`  
 - `500` — Database/server error
+
+## users
+
+### PUT /users
+
+Use this endpoint to update certain fields of an account
+
+Note:
+
+Possible values for the field `user_level` are 
+
+- Super
+- Mod
+- Agent
+- Regular
+- Tenant
+
+#### Required in Body
+
+- `id`: ID of the row to update
+- At least one updatable field
+
+#### Updatable Fields
+
+| Field           | Type   | Required | Description                       |
+|-----------------|--------|----------|-----------------------------------|
+| `user_name`     | string | No       | username of the account           |
+| `user_pass`     | string | No       | Password of the account           |
+| `user_email`    | int    | No       | Email address                     |
+| `user_date`     | string | No       | user date of the account          |
+| `user_level`    | string | No       | User access                       |
+
+### DELETE /users
+
+Delete one or more appliance records.
+
+#### Request Body
+
+| Field | Type        | Required | Description                    |
+|-------|-------------|----------|--------------------------------|
+| `id`  | int \| int[]| Yes      | ID or array of IDs to delete   |
+
+#### Example Request Body
+
+```json
+{ "id": 5 }
+```
+
+```json
+{ "id": [6, 7, 8] }
+```
+
+```json
+{ "message": "Deletion successful" }
+```
