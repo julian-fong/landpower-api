@@ -2557,6 +2557,22 @@ Delete one or more payment records.
 
 ## users
 
+### GET /users
+
+Use this endpoint to retrieve information on the users of the table
+
+```json
+[
+    {
+        "user_id": 1,
+        "user_name": "Account",
+        "user_email": "account.test@gmail.com",
+        "user_date":"2025-05-1234: 12:34",
+        "user_level":"Regular"
+    }
+]
+```
+
 ### PUT /users
 
 Use this endpoint to update certain fields of an account, or delete account records
